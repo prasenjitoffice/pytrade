@@ -3,6 +3,7 @@ import upstox_client
 from django.shortcuts import redirect
 from urllib.parse import quote
 from django.http import JsonResponse
+from upstox_client.rest import ApiException
 
 API_LOGIN_URL = "https://api-v2.upstox.com/login/authorization/dialog"
 
@@ -30,9 +31,32 @@ def generate_token(code, client_id, client_secret):
     response = requests.post(API_TOKEN_URL, data=payload, headers=headers)
     return response.json()
 
-    # return {'email': 'prasenjitbanik2021@gmail.com', 'exchanges': ['NFO', 'BSE', 'BCD', 'BFO', 'MCX', 'NSE', 'CDS'],
-    #  'products': ['OCO', 'D', 'CO', 'I'], 'broker': 'UPSTOX', 'user_id': 'JS5910', 'user_name': 'PRASENJIT BANIK',
-    #  'order_types': ['MARKET', 'LIMIT', 'SL', 'SL-M'], 'user_type': 'individual', 'poa': False, 'ddpi': False,
-    #  'is_active': True,
-    #  'access_token': 'eyJ0eXAiOiJKV1QiLCJrZXlfaWQiOiJza192MS4wIiwiYWxnIjoiSFMyNTYifQ.eyJzdWIiOiJKUzU5MTAiLCJqdGkiOiI2OTVhODBmNTNiNDVkZTM4MjdjZGEzNmMiLCJpc011bHRpQ2xpZW50IjpmYWxzZSwiaXNQbHVzUGxhbiI6ZmFsc2UsImlhdCI6MTc2NzUzODkzMywiaXNzIjoidWRhcGktZ2F0ZXdheS1zZXJ2aWNlIiwiZXhwIjoxNzY3NTY0MDAwfQ.6164e0kOovKJBuv6XcI97N7sSko4tGAv5G6ep6JGWQA',
-    #  'extended_token': None}
+def get_configuration(sandbox = False):
+    configuration = upstox_client.Configuration(sandbox)
+    if sandbox:
+        configuration.access_token = 'SANDBOX_ACCESS_TOKEN'
+    else:
+        configuration.access_token = 'PROD_ACCESS_TOKEN'
+    return configuration
+
+def get_history():
+    configuration = get_configuration()
+    api_instance = upstox_client.HistoryV3Api(upstox_client.ApiClient(configuration))
+
+    instrument_key = "NSE_EQ|INE848E01016"
+    unit = "days"      # minutes | hours | days | weeks | months
+    interval = 1        # string, not int
+    to_date = "2025-03-22"
+    from_date = "2025-01-01"
+
+    try:
+        response = api_instance.get_historical_candle_data1(
+            instrument_key=instrument_key,
+            unit=unit,
+            interval=interval,
+            to_date=to_date,
+            from_date=from_date
+        )
+        print(response.data.candles)
+    except ApiException as e:
+        print("Exception:", e)

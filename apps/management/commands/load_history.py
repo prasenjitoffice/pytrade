@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import datetime
+from apps.common.trader import get_history
 from apps.equities.models.equity import Equity
 from apps.equities.models.historical import Historical
 from django.contrib.auth.models import User
-
 from apps.users.models.user_app import UserApp
 
 
@@ -18,4 +18,4 @@ class Command(BaseCommand):
         # print(UserApp._meta.get_field("user").related_model)
         # print(Equity.objects.get(id=118).history.first())
         print(User.objects.get(id=3).app.first())
-
+        print(get_history())
