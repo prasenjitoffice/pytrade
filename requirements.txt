@@ -1,0 +1,3 @@
+pymysql
+upstox-python-sdk
+requests
