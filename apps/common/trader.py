@@ -39,16 +39,9 @@ def get_configuration(sandbox = False):
         configuration.access_token = 'PROD_ACCESS_TOKEN'
     return configuration
 
-def get_history():
+def get_history(instrument_key, unit, interval, to_date, from_date):
     configuration = get_configuration()
     api_instance = upstox_client.HistoryV3Api(upstox_client.ApiClient(configuration))
-
-    instrument_key = "NSE_EQ|INE848E01016"
-    unit = "days"      # minutes | hours | days | weeks | months
-    interval = 1        # string, not int
-    to_date = "2025-03-22"
-    from_date = "2025-01-01"
-
     try:
         response = api_instance.get_historical_candle_data1(
             instrument_key=instrument_key,

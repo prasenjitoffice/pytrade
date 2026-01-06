@@ -1,21 +1,23 @@
 from django.core.management.base import BaseCommand
-from django.utils import timezone
-from datetime import datetime
 from apps.common.trader import get_history
-from apps.equities.models.equity import Equity
-from apps.equities.models.historical import Historical
 from django.contrib.auth.models import User
-from apps.users.models.user_app import UserApp
 
 
 class Command(BaseCommand):
     message = "Loads history from database"
     def handle(self, *args, **options):
-        # print(Historical._meta.get_field("equity").related_model)
-        # self.stdout.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        # print(dir(Equity.objects.get(id=118).history.first()))
-        # print (timezone.get_current_timezone())
-        # print(UserApp._meta.get_field("user").related_model)
-        # print(Equity.objects.get(id=118).history.first())
+
+        instrument_key = "NSE_EQ|INE848E01016"
+        unit = "days"  # minutes | hours | days | weeks | months
+        interval = 1  # string, not int
+        to_date = "2025-03-22"
+        from_date = "2025-01-01"
+
+        print(get_history(instrument_key=instrument_key,
+                          unit=unit,
+                          interval=interval,
+                          to_date=to_date,
+                          from_date=from_date))
+
         print(User.objects.get(id=3).app.first())
-        print(get_history())
+
