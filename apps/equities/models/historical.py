@@ -25,9 +25,7 @@ class Historical(models.Model):
     high = models.FloatField()
     low = models.FloatField()
     close = models.FloatField(blank=True, null=True)
-    ltp = models.FloatField(blank=True, null=True)
-    volumn = models.BigIntegerField(blank=True, null=True)
-    total_trade = models.BigIntegerField(blank=True, null=True)
+    volume = models.BigIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=True, null=True)
 

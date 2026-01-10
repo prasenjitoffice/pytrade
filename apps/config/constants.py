@@ -1,5 +1,7 @@
 class Constants:
     # Exchange / Market
+    NSE = "NSE"
+    BSE = "BSE"
     NSE_EQUITY = "NSE_EQ"
     NSE_INDEX = "NSE_INDEX"
     NSE_FO = "NSE_FO"
@@ -101,3 +103,4 @@ class Constants:
 
     #System Lookup
     LAST_RUN_DATE = 'LAST_RUN_DATE'
+    INC_MINUTE = 'INC_TIME'

@@ -5,6 +5,7 @@ from datetime import datetime
 from apps.equities.models.equity import Equity
 from apps.equities.models.historical import Historical
 from apps.common.datelib import *
+from  django.core.cache import cache
 
 class Command(BaseCommand):
 
@@ -17,4 +18,6 @@ class Command(BaseCommand):
         # print (timezone.get_current_timezone())
         # print(UserApp._meta.get_field("user").related_model)
         # print(Equity.objects.get(id=118).history.first())
-        print(current_date())
+        print(cache.get('API_ACCESS_TOKEN'))
+        # cache.set('API_ACCESS_TOKEN','khjkh', timeout=60*60*24)
+

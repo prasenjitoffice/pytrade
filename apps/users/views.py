@@ -2,10 +2,13 @@ from datetime import datetime
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from apps.common.datelib import current_date
 from apps.users.models.user_app import UserApp
 from apps.common.trader import client_login, generate_token
 from django.urls import reverse
 from django.db import DatabaseError
+from django.core.cache import cache
+
 
 def index(request):
     data = {
@@ -43,8 +46,9 @@ def create_token(request):
         response = generate_token(request.GET.get("code"),app.client_id,app.client_secret)
         accessToken = response['access_token']
         app.access_token = accessToken
-        app.last_used_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        app.last_used_at = current_date()
         app.save()
+        cache.set('API_ACCESS_TOKEN',accessToken, timeout=60*60*24)
         return redirect(reverse('user-index'))
     except DatabaseError:
         messages.error(request, "Failed to generate token.")
