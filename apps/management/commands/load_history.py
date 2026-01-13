@@ -1,4 +1,9 @@
+import sys
 from datetime import datetime, timedelta
+from typing import Dict, Any
+
+import dateutil
+import numpy as np
 from django.core.management.base import BaseCommand
 from apps.common import datelib
 from apps.common.datelib import current_date
@@ -13,6 +18,7 @@ import pandas as pd
 from scipy.signal import find_peaks
 
 from apps.equities.models.lt_ob_zone import LtObZone
+from apps.equities.models.lt_td_position import LtTdPosition
 
 
 def get_historical_data(instrument_key, unit, interval, to_date, from_date):
@@ -26,7 +32,15 @@ def get_historical_data(instrument_key, unit, interval, to_date, from_date):
 class Command(BaseCommand):
     message = "Loads history from database"
     def handle(self, *args, **options):
-        equities = Equity.objects.filter(id=118, instrument_type="EQ",exchange=Constants.NSE)
+        ids = [118]
+        filters: Dict[str, Any] = {
+            "instrument_type":"EQ",
+            "exchange":Constants.NSE
+        }
+        if ids:
+            filters["id__in"] = ids
+        # equities = Equity.objects.filter(id__in=[118], instrument_type="EQ",exchange=Constants.NSE)
+        equities = Equity.objects.filter(**filters)
         to_date = datetime.today()
         from_date = to_date - timedelta(days=200)
         to_date = to_date.strftime(DATE_FORMAT_YMD)
@@ -35,40 +49,53 @@ class Command(BaseCommand):
 
         if equities is not None:
             for equity in equities:
+                obBulkData = []
                 if equity.history.count() > 0:
                     last_added = equity.history.order_by('-market_date').first().market_date
                     from_date = last_added + timedelta(days=1)
                 unit = "days"  # minutes | hours | days | weeks | months
                 interval = 1  # string, not int
                 histories = get_historical_data(equity.instrument_key, unit, interval, to_date, from_date)
-                if histories is not None:
+                if len(histories) > 0:
+                    self.stdout.write(self.style.SUCCESS(f"{equity.tradingsymbol} history is getting loaded..."))
+                    zoneModel = LtObZone()
                     bulkData = []
                     for history in histories:
                         market_date = datelib.convert_date(history[0],current_format=DATE_FORMAT_YMDTHMSZ, new_format=DATE_FORMAT_YMD)
                         added_date = datelib.convert_date(history[0],current_format=DATE_FORMAT_YMDTHMSZ, new_format=DATE_FORMAT_YMDHMS)
                         bulkData.append(Historical(equity_id = equity.id,market_date = market_date, open=history[1], high = history[2], low = history[3], close = history[4], volume = history[5], created_at = added_date))
-                    # Historical.objects.bulk_create(bulkData)
+                    Historical.objects.bulk_create(bulkData)
+                    self.stdout.write(self.style.SUCCESS(f" - Histories added successfully"))
+                    self.stdout.write(self.style.SUCCESS(f" - Positions are loading..."))
                     histories = histories[::-1]
                     df = pd.DataFrame(histories)
-                    # df.columns = ['market_date','open','high','low','close','volume']
+                    # sys.exit()
                     closes = df[4].to_numpy()
+                    dfData = df.to_numpy()
                     ema = get_ema(closes, EMA_WINDOW)
                     swingHigh = get_swing_hl(ema,EMA_WINDOW)
                     swingLow = get_swing_hl(-ema,EMA_WINDOW, True)
-                    # print(ema[swingLow],df[0][swingLow])
-
-                    # df["created_at"] = datelib.convert_date(df[0], current_format=DATE_FORMAT_YMDTHMSZ,new_format=DATE_FORMAT_YMDHMS)
-                    df["P2_H"] = df[2].shift(2)
-                    df["P2_L"] = df[3].shift(2)
-                    df["Gap_Up"] = df[3] > df["P2_H"]
-                    df["Gap_Down"] = df["P2_L"] > df[2]
-                    obDf = df[df["Gap_Up"] | df["Gap_Down"]]
-
-                    # if df["Gap_Up"] > 0:
-                    #     df["OB_Model"] = df[LtObZone(equity_id=equity.id, zone_low=df["P2_H"], zone_high=df[3], irl_type=Constants.BULLISH, created_at=df["created_at"])]
-                    #     df["Gap_Down"] = None
-                    # if df["Gap_Down"] > 0:
-                    #     df["OB_Model"] = None
-                    #     df["Gap_Down"] = df[LtObZone(equity_id=equity.id, zone_low=df["P2_H"], zone_high=df[3], irl_type=Constants.BULLISH, created_at=df["created_at"])]
-
-                    print(obDf)
+                    swingData = np.sort(np.concatenate((swingHigh,swingLow)))
+                    ltPosCount = LtTdPosition.objects.filter(equity_id=equity.id).count()
+                    ltPosLastAdded = datetime.today()
+                    if ltPosCount > 0:
+                        ltPosLastAdded = LtTdPosition.objects.filter(equity_id=equity.id).order_by('-created_at').first().created_at
+                    ltPosBulkData = []
+                    for index in swingData:
+                        item = dfData[index]
+                        added_date = datelib.replace_tz(item[0],DATE_FORMAT_YMDTHMSZ)
+                        if (added_date <= ltPosLastAdded) & (ltPosCount > 0):
+                            continue
+                        posType = Constants.LOW
+                        posValue = item[3]
+                        if np.any(swingHigh == index):
+                            posType = Constants.HIGH
+                            posValue = item[2]
+                        ltPosBulkData.append(LtTdPosition(equity_id = equity.id,position=posType,value=posValue,created_at=added_date,updated_at=current_date(True)))
+                    LtTdPosition.objects.bulk_create(ltPosBulkData)
+                    self.stdout.write(self.style.SUCCESS(f" - Detecting OB Zone..."))
+                    obBulkData = zoneModel.get_ob_zone(equity_id=equity.id,df=df)
+                    LtObZone.objects.bulk_create(obBulkData)
+                    self.stdout.write(self.style.SUCCESS(f"History added successfully..."))
+                else:
+                    self.stdout.write(self.style.ERROR(f"{equity.tradingsymbol} no history to load..."))

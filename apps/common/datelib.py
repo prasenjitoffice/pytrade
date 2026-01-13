@@ -1,4 +1,6 @@
 from datetime import datetime
+
+import dateutil
 from django.utils import timezone
 from apps.config.constants import Constants
 from apps.systems.models.system_lookup import SystemLookup
@@ -28,9 +30,12 @@ def current_date(force = False):
         result = get_last_run_date()
     else:
         result = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-    timezone.make_aware(result)
     return result
 
 def convert_date(value, current_format, new_format):
     new_date = datetime.strptime(value, current_format)
+    new_date = new_date.replace(tzinfo=None)
     return new_date.strftime(new_format)
+
+def replace_tz(value, current_format):
+    return datetime.strptime(value, current_format).replace(tzinfo=None)
