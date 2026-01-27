@@ -2,13 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="573f663e-b107-4a9f-a8e6-adf4f56fd809" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/apps/management/commands/trend_tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_DB_/raw_query" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/common/datelib.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/common/datelib.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/equities/models/lt_ob_zone.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/equities/models/lt_ob_zone.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/management/commands/load_history.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/load_history.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/management/commands/trend_tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/trend_tracker.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pytrade/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/pytrade/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -142,6 +143,11 @@
       <workItem from="1768238008547" duration="4914000" />
       <workItem from="1768281262027" duration="1632000" />
       <workItem from="1768325422904" duration="1852000" />
+      <workItem from="1768362584007" duration="1855000" />
+      <workItem from="1768629183449" duration="5250000" />
+      <workItem from="1768738472383" duration="11328000" />
+      <workItem from="1769250718759" duration="3717000" />
+      <workItem from="1769521941086" duration="4961000" />
     </task>
     <servers />
   </component>

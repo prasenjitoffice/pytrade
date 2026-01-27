@@ -45,7 +45,7 @@ class LtObZone(models.Model):
         obData = obDf.to_numpy()
         for ob in obData:
             added_on = datelib.convert_date(ob[0], current_format=DATE_FORMAT_YMDTHMSZ, new_format=DATE_FORMAT_YMDHMS)
-            if LtObZone.objects.count() > 0:
+            if LtObZone.objects.filter(equity_id=equity_id).count() > 0:
                 lastAddedDate = LtObZone.objects.filter(equity_id=equity_id).order_by('-created_at').first().created_at
                 dt = datelib.replace_tz(ob[0], DATE_FORMAT_YMDTHMSZ)
                 if dt <= lastAddedDate:
