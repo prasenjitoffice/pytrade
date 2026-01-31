@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os.path
 from pathlib import Path
-# from mongoengine import connect
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,10 +96,7 @@ DATABASES = {
         "PORT": "3306",
     }
 }
-# connect(
-#     db="pytrade",
-#     host="mongodb+srv://pydb_user:DxgCL2PByLbiXJDC@pytrade.4q2lvyd.mongodb.net/?appName=pytrade"
-# )
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

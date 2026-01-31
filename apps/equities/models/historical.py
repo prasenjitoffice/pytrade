@@ -8,7 +8,7 @@
 from django.db import models
 from django.db.models import PROTECT
 
-from .equity import Equity
+from apps.equities.models.equity import Equity
 
 
 class Historical(models.Model):
@@ -19,16 +19,17 @@ class Historical(models.Model):
         on_delete=PROTECT,
         related_name='history'  # ✅ now we have a clear reverse name
     )
-
-    market_date = models.DateField()
+    # equity_id = models.IntegerField()
+    # market_date = models.DateField()
     open = models.FloatField()
     high = models.FloatField()
     low = models.FloatField()
     close = models.FloatField(blank=True, null=True)
     volume = models.BigIntegerField(blank=True, null=True)
-    created_at = models.DateTimeField(blank=True, null=True)
+    created_at = models.DateTimeField(primary_key=True, blank=True, null=False)
     updated_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'historical'
+        unique_together = ("equity_id", "created_at")

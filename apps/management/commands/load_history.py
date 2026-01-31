@@ -63,9 +63,9 @@ class Command(BaseCommand):
                     zoneModel = LtObZone()
                     bulkData = []
                     for history in histories:
-                        market_date = datelib.convert_date(history[0],current_format=DATE_FORMAT_YMDTHMSZ, new_format=DATE_FORMAT_YMD)
+                        # market_date = datelib.convert_date(history[0],current_format=DATE_FORMAT_YMDTHMSZ, new_format=DATE_FORMAT_YMD)
                         added_date = datelib.convert_date(history[0],current_format=DATE_FORMAT_YMDTHMSZ, new_format=DATE_FORMAT_YMDHMS)
-                        bulkData.append(Historical(equity_id = equity.id,market_date = market_date, open=history[1], high = history[2], low = history[3], close = history[4], volume = history[5], created_at = added_date))
+                        bulkData.append(Historical(equity_id = equity.id, open=history[1], high = history[2], low = history[3], close = history[4], volume = history[5], created_at = added_date,updated_at=current_date(True)))
                     Historical.objects.bulk_create(bulkData)
 
                     self.stdout.write(self.style.SUCCESS(f" - Histories added successfully"))

@@ -4,9 +4,12 @@ import upstox_client
 from django.shortcuts import redirect
 from urllib.parse import quote
 from django.http import JsonResponse
+from django.utils.dateparse import parse_date
 from upstox_client.rest import ApiException
 from django.core.cache import cache
 from scipy.signal import find_peaks
+
+from apps.equities.models.historical import Historical
 
 API_LOGIN_URL = "https://api-v2.upstox.com/login/authorization/dialog"
 
@@ -71,3 +74,9 @@ def get_swing_hl(array,window = 3, low = False):
     swingHL, _ = find_peaks(array)
     # swing_HL_values = array[swingHL]
     return swingHL
+
+def get_ohlc(equity_id, date):
+    pDate = parse_date(date)
+    history = Historical.objects.filter(equity_id=118, created_at__date= pDate).first()
+    return history
+
