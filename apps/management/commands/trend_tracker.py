@@ -4,6 +4,8 @@ from datetime import timedelta
 import pandas as pd
 from django.core.management.base import BaseCommand
 import talib
+from numpy.core.defchararray import upper
+import numpy as np
 from apps.equities.models.equity import Equity
 from apps.equities.models.historical import Historical
 from apps.equities.models.lt_ob_zone import LtObZone
@@ -11,8 +13,9 @@ from apps.common.datelib import current_date,convert_date
 from apps.common.dateformat import *
 from apps.config.constants import Constants
 from apps.equities.models.lt_td_position import LtTdPosition
-from apps.common.trader import get_ohlc,get_history
-
+from apps.common.trader import get_ohlc,get_history,get_patterns
+# import pandas_ta as  ta
+import apps.common.indicators as ind
 
 class Command(BaseCommand):
     TEST = "My test Cmd"
@@ -40,6 +43,7 @@ class Command(BaseCommand):
         """
         params = [current_date(), current_date(), Constants.LOW, TYPE]
         results = LtTdPosition.objects.raw(query, params)
+        patterns = get_patterns(Constants.BULLISH)
         for obj in results:
             ohlc = None
             obZoneModel = LtObZone.objects.filter(
@@ -67,12 +71,14 @@ class Command(BaseCommand):
             # Get only the higher highs including the last high
             hhDf = df[(df["created_at"] == latestHighDate) | (df["high_gap"] > 0)]
 
-            unit = 'minutes'
+            unit = 'days'
             interval = 1
             to_date = current_date().strftime(DATE_FORMAT_YMD)
             # from_date = obj.created_at.strftime(DATE_FORMAT_YMD)
             # to_date = (current_date() - timedelta(days=4)).strftime(DATE_FORMAT_YMD)
-            from_date = (current_date() - timedelta(days=10)).strftime(DATE_FORMAT_YMD)
+            from_date = (current_date() - timedelta(days=5)).strftime(DATE_FORMAT_YMD)
+            from_date = '2025-10-22'
+            to_date = '2025-12-22'
             history = get_history(instrument_key=obj.instrument_key,
                                   unit=unit,
                                   interval=interval,
@@ -87,18 +93,49 @@ class Command(BaseCommand):
                 4:'close',
                 5:'volume'
             })
+            o = hisDf["open"]
+            h = hisDf["high"]
+            l = hisDf["low"]
+            c = hisDf["close"]
+
             # hisDf["created_at"] = hisDf[convert_date(hisDf["created_at"],DATE_FORMAT_YMDTHMSZ,DATE_FORMAT_YMDHMS)]
             hisDf['created_at'] = pd.to_datetime(hisDf['created_at'],format=DATE_FORMAT_YMDTHMSZ)
-            hisDf = hisDf.sort_index()
+            # hisDf = hisDf.sort_index()
             hisDf.set_index('created_at',inplace=True)
+            # hisDf["doji"] = talib.CDLMORNINGSTAR(o,h,l,c)
+            hisDf['candle'] = ind.candle_type(o,h,l,c)
+            # hisDf['doji'] = ind.get_doji(o,h,l,c)
+            # hisDf['tws'] = ind.three_white_soldiers(o,h,l,c)
+            # hisDf['es'] = ind.evening_star(o,h,l,c)
+            # hisDf['ema'] = talib.EMA(c.astype(float).values,20)
+            hisDf["break_out"] = np.where( ((c > latestHigh) & (hisDf.index.values > latestHighDate)), 1, 0)
+            # print(hisDf)
+            if hisDf["break_out"].iloc[-1]:
+                breakOutDate = hisDf.index.values[-1]
+                print(breakOutDate)
+            sys.exit()
             hisDf = hisDf.between_time("09:15", "15:30")
-
             # for time in PARAMS["EQ"]["MULTIFRAME"]:
-            multiframe = hisDf.resample('1D', origin='start_day', offset='9h15min').agg({
+            multiframe = hisDf.resample('3min', origin='start_day', offset='9h15min').agg({
                 'open':'first',
                 'high':'max',
                 'low':'min',
                 'close':'last',
-            }).dropna()
-            talib.RSI
-            print(multiframe)
+            }).dropna().tail(300)
+
+            # multiframe["CDL3WHITESOLDIERS"] = getattr(talib,'CDL3WHITESOLDIERS')(multiframe["open"],multiframe["high"],multiframe["low"],multiframe["close"])
+            # multiframe = multiframe[multiframe["CDL3WHITESOLDIERS"] != 0]
+            # pd.set_option("display.max_rows", None)
+            # pd.set_option("display.max_columns", None)
+            # print(talib.get_functions())
+            # for f in talib.get_functions():
+            #     if f.startswith('CDL'):
+            #         multiframe[f] = getattr(talib, f)(multiframe["open"],multiframe["high"],multiframe["low"],multiframe["close"])
+            # sys.exit()
+            # for pattern in patterns:
+            #     multiframe[pattern.function_key.upper()] = getattr(talib,pattern.function_key.upper())(multiframe["open"],multiframe["high"],multiframe["low"],multiframe["close"])
+            # print(multiframe.to_csv("multiframe.csv"))
+
+            # pd.set_option("display.max_columns", None)
+            # pd.set_option("display.max_rows", None)
+            # print(multiframe)

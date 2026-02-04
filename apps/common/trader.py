@@ -8,6 +8,7 @@ from django.utils.dateparse import parse_date
 from upstox_client.rest import ApiException
 from django.core.cache import cache
 from scipy.signal import find_peaks
+from apps.equities.models.pattern import Pattern
 
 from apps.equities.models.historical import Historical
 
@@ -80,3 +81,5 @@ def get_ohlc(equity_id, date):
     history = Historical.objects.filter(equity_id=118, created_at__date= pDate).first()
     return history
 
+def get_patterns(type):
+    return Pattern.objects.filter(type=type,is_active=1).order_by('priority')

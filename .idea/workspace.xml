@@ -1,40 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="573f663e-b107-4a9f-a8e6-adf4f56fd809" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+    <list default="true" id="1ac1f391-f911-442e-bfe6-9cf88a51108a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/common/indicators.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/apps/equities/models/pattern.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pytrade.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pytrade.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/common/trader.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/common/trader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/equities/models/historical.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/equities/models/historical.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/management/commands/load_history.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/load_history.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/management/commands/test_cmd.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/test_cmd.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/management/commands/trend_tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/trend_tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pytrade/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/pytrade/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/users/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
-    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
       </list>
-    </option>
-  </component>
-  <component name="FlaskConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass">
-    <envs>
-      <env key="FLASK_APP" value="app" />
-    </envs>
-    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform)); sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo, NoAppException&#10;for module in [&quot;main.py&quot;, &quot;wsgi.py&quot;, &quot;app.py&quot;]:&#10;    try: locals().update(ScriptInfo(app_import_path=module, create_app=None).load_app().make_shell_context()); print(&quot;\nFlask App: %s&quot; % app.import_name); break&#10;    except NoAppException: pass" />
-    <option name="myEnvs">
-      <map>
-        <entry key="FLASK_APP" value="app" />
-      </map>
     </option>
   </component>
   <component name="Git.Settings">
@@ -43,118 +35,35 @@
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
-  <component name="ProjectId" id="37eFT6WL38MR2fgV01HMNrpZfON" />
+  <component name="ProjectId" id="391xk2ceFamHrTPGfJGFRpBPG23" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.pycharm.django.structure.promotion.once.per.project": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ai.playground.ignore.import.keys.banner.in.settings": "true",
-    "django.template.preview.state": "SHOW_EDITOR_AND_PREVIEW",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/var/www/html/pytrade/apps/systems/models",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/apps/systems/models" />
-      <recent name="$PROJECT_DIR$/apps/common" />
-      <recent name="$PROJECT_DIR$/apps/equities/models" />
-      <recent name="$PROJECT_DIR$/apps/management/command" />
-      <recent name="$PROJECT_DIR$/apps/management" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/apps" />
-      <recent name="$PROJECT_DIR$/templates/users" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/pytrade/apps/user/templates" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="pytrade" type="Python.DjangoServer" factoryName="Django server">
-      <module name="pytrade" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="RUN_TOOL" value="" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <option name="port" value="8000" />
-      <option name="host" value="" />
-      <option name="additionalOptions" value="" />
-      <option name="browserUrl" value="" />
-      <option name="runTestServer" value="false" />
-      <option name="runNoReload" value="false" />
-      <option name="useCustomRunCommand" value="false" />
-      <option name="customRunCommand" value="" />
-      <method v="2" />
-    </configuration>
-  </component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-3944b0c99280-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.30387.127" />
+        <option value="bundled-python-sdk-4762d8aabb82-6d6dccd035ac-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-253.30387.173" />
       </set>
     </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="573f663e-b107-4a9f-a8e6-adf4f56fd809" name="Changes" comment="" />
-      <created>1767255637071</created>
+      <changelist id="1ac1f391-f911-442e-bfe6-9cf88a51108a" name="Changes" comment="" />
+      <created>1769877517263</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1767255637071</updated>
-      <workItem from="1767255638664" duration="841000" />
-      <workItem from="1767274523617" duration="13861000" />
-      <workItem from="1767332459534" duration="1056000" />
-      <workItem from="1767417070138" duration="7815000" />
-      <workItem from="1767462760761" duration="1709000" />
-      <workItem from="1767506494645" duration="17561000" />
-      <workItem from="1767586397751" duration="2597000" />
-      <workItem from="1767675878426" duration="3972000" />
-      <workItem from="1767720424102" duration="5062000" />
-      <workItem from="1767759102563" duration="5213000" />
-      <workItem from="1767805698693" duration="3365000" />
-      <workItem from="1767934835214" duration="3821000" />
-      <workItem from="1768026454645" duration="7586000" />
-      <workItem from="1768036033249" duration="23522000" />
-      <workItem from="1768110590619" duration="16267000" />
-      <workItem from="1768238008547" duration="4914000" />
-      <workItem from="1768281262027" duration="1632000" />
-      <workItem from="1768325422904" duration="1852000" />
-      <workItem from="1768362584007" duration="1855000" />
-      <workItem from="1768629183449" duration="5250000" />
-      <workItem from="1768738472383" duration="11328000" />
-      <workItem from="1769250718759" duration="3717000" />
-      <workItem from="1769521941086" duration="12316000" />
-      <workItem from="1769621826972" duration="4690000" />
-      <workItem from="1769660665960" duration="5892000" />
-      <workItem from="1769707396909" duration="6937000" />
-      <workItem from="1769792980669" duration="2985000" />
-      <workItem from="1769875270162" duration="6000" />
+      <updated>1769877517263</updated>
     </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
   </component>
 </project>

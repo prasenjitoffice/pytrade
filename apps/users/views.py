@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -42,7 +43,8 @@ def api_login(request):
 
 def create_token(request):
     try:
-        app = UserApp.objects.get(user_id = request.user.id)
+        print(request.user.id)
+        app = UserApp.objects.get(user_id = 3)
         response = generate_token(request.GET.get("code"),app.client_id,app.client_secret)
         accessToken = response['access_token']
         app.access_token = accessToken
