@@ -13,27 +13,91 @@ from apps.common.datelib import current_date,convert_date
 from apps.common.dateformat import *
 from apps.config.constants import Constants
 from apps.equities.models.lt_td_position import LtTdPosition
-from apps.common.trader import get_ohlc,get_history,get_patterns
+from apps.common.trader import get_ohlc, get_history, get_patterns, get_db_history
 # import pandas_ta as  ta
 import apps.common.indicators as ind
+import re
+
+TYPE = 'EQ'
+ORDER_TYPE = "CNC"
+PARAMS = {
+    "CNC": {
+        "PAST_LIMIT":60,
+        "MULTIFRAME": [
+            "1D", "1h", "15min", "5min"
+        ]
+    },
+    "MIS": {
+        "PAST_LIMIT": 2,
+        "MULTIFRAME": [
+            "5min", "3min", "1min"
+        ]
+    }
+}
+ABBR = {
+    "D": "days",
+    "h": "hours",
+    "min": "minutes"
+}
+
+def get_units(time):
+    result = re.search('(\d+)(\w+)', time)
+    interval = result.group(1)
+    unitGroup = result.group(2)
+    unit = ABBR[unitGroup]
+    # unit = 'days'
+    # interval = 1
+    return [unit, interval]
+
+def get_ob_zone(obj):
+    return LtObZone.objects.filter(
+        equity_id=obj.equity_id,
+        zone_high__gte=obj.value,
+        zone_low__lte=obj.value,
+        created_at__lte=obj.created_at
+    ).order_by('-created_at')
+
+
+def get_previous_highs(obj):
+    return LtTdPosition.objects.filter(
+        equity_id=obj.equity_id,
+        position=Constants.HIGH,
+        created_at__lte=obj.created_at
+    ).order_by('-created_at').values('value', 'created_at')
+
+
+def fetch_history(obj, from_date, to_date, force_mis = False):
+    if (ORDER_TYPE == "CNC") & (force_mis == False):
+        history = get_db_history(equity_id=obj.equity_id,
+                                 to_date=to_date,
+                                 from_date=from_date)
+        df = pd.DataFrame(history)
+    else:
+        unit, interval = get_units('1min')
+        history = get_history(instrument_key=obj.instrument_key,
+                              unit=unit,
+                              interval=interval,
+                              to_date=to_date,
+                              from_date=from_date)
+        df = pd.DataFrame(history)[::-1]
+
+    df = df.rename(columns={
+        0: 'created_at',
+        1: 'open',
+        2: 'high',
+        3: 'low',
+        4: 'close',
+        5: 'volume'
+    })
+    df['created_at'] = pd.to_datetime(df['created_at'], format=DATE_FORMAT_YMDTHMSZ)
+    # df = df.sort_index()
+    df.set_index('created_at', inplace=True)
+    return df
 
 class Command(BaseCommand):
     TEST = "My test Cmd"
     def handle(self, *args, **options):
         print(self.TEST)
-        TYPE = 'EQ'
-        PARAMS = {
-            "EQ":{
-                "MULTIFRAME":[
-                    "D","1h","15min","5min"
-                ]
-            },
-            "FO":{
-                "MULTIFRAME": [
-                    "5min", "3min", "1min"
-                ]
-            }
-        }
         query = """
         SELECT pos.*,e.instrument_key,%s as today_date FROM equity e 
                               INNER JOIN (SELECT td.id,td.equity_id, td.value, td.created_at  
@@ -44,84 +108,94 @@ class Command(BaseCommand):
         params = [current_date(), current_date(), Constants.LOW, TYPE]
         results = LtTdPosition.objects.raw(query, params)
         patterns = get_patterns(Constants.BULLISH)
+        # unit, interval = get_units('1D')
+        # print(unit,interval)
+        # sys.exit()
+        count = 1
         for obj in results:
+            if obj.equity_id != 3957:
+                continue
+            breakOut = None
+            preBreakOut = None
+            moreBack = None
             ohlc = None
-            obZoneModel = LtObZone.objects.filter(
-                equity_id = obj.equity_id,
-                zone_high__gte = obj.value,
-                zone_low__lte = obj.value,
-                created_at__lte = obj.created_at
-            ).order_by('-created_at')
-
-            previousHighs = LtTdPosition.objects.filter(
-                equity_id = obj.equity_id,
-                position=Constants.HIGH,
-                created_at__lte = obj.created_at
-            ).order_by('-created_at').values('value','created_at')
-
+            obZoneModel = get_ob_zone(obj)
+            previousHighs = get_previous_highs(obj)
             ohlc = get_ohlc(obj.equity_id, current_date().strftime(DATE_FORMAT_YMD))
+            hdf = pd.DataFrame(previousHighs)
+            latestHigh = hdf.iloc[0]['value']
+            latestHighDate = hdf.iloc[0]['created_at']
+            hdf["high_gap"] = hdf["value"] - latestHigh
+            hdf = hdf[(hdf["created_at"] == latestHighDate) | (hdf["high_gap"] > 0)]
+                            # hdf["high"] =  ohlc.high
+            # hdf["high_gap"] =  hdf["value"] - latestHigh
+            # hdf["close_gap"] = hdf["value"] - ohlc.close
+            # hdf["close_gap_per"] = ((hdf["value"] - ohlc.close)/ohlc.close) * 100
+            # # Get only the higher highs including the last high
+            # hhhdf = hdf[(hdf["created_at"] == latestHighDate) | (hdf["high_gap"] > 0)]
 
-            df = pd.DataFrame(previousHighs)
-            latestHigh = df.iloc[0]['value']
-            latestHighDate = df.iloc[0]['created_at']
-            df["high"] =  ohlc.high
-            df["high_gap"] =  df["value"] - latestHigh
-            df["close_gap"] = df["value"] - ohlc.close
-            df["close_gap_per"] = ((df["value"] - ohlc.close)/ohlc.close) * 100
-            # Get only the higher highs including the last high
-            hhDf = df[(df["created_at"] == latestHighDate) | (df["high_gap"] > 0)]
-
-            unit = 'days'
-            interval = 1
             to_date = current_date().strftime(DATE_FORMAT_YMD)
-            # from_date = obj.created_at.strftime(DATE_FORMAT_YMD)
-            # to_date = (current_date() - timedelta(days=4)).strftime(DATE_FORMAT_YMD)
-            from_date = (current_date() - timedelta(days=5)).strftime(DATE_FORMAT_YMD)
-            from_date = '2025-10-22'
-            to_date = '2025-12-22'
-            history = get_history(instrument_key=obj.instrument_key,
-                                  unit=unit,
-                                  interval=interval,
-                                  to_date=to_date,
-                                  from_date=from_date)
-            hisDf = pd.DataFrame(history)[::-1]
-            hisDf = hisDf.rename(columns={
-                0:'created_at',
-                1:'open',
-                2:'high',
-                3:'low',
-                4:'close',
-                5:'volume'
-            })
-            o = hisDf["open"]
-            h = hisDf["high"]
-            l = hisDf["low"]
-            c = hisDf["close"]
+            from_date = (current_date() - timedelta(days=PARAMS[ORDER_TYPE]["PAST_LIMIT"])).strftime(DATE_FORMAT_YMD)
 
-            # hisDf["created_at"] = hisDf[convert_date(hisDf["created_at"],DATE_FORMAT_YMDTHMSZ,DATE_FORMAT_YMDHMS)]
-            hisDf['created_at'] = pd.to_datetime(hisDf['created_at'],format=DATE_FORMAT_YMDTHMSZ)
-            # hisDf = hisDf.sort_index()
-            hisDf.set_index('created_at',inplace=True)
-            # hisDf["doji"] = talib.CDLMORNINGSTAR(o,h,l,c)
-            hisDf['candle'] = ind.candle_type(o,h,l,c)
-            # hisDf['doji'] = ind.get_doji(o,h,l,c)
-            # hisDf['tws'] = ind.three_white_soldiers(o,h,l,c)
-            # hisDf['es'] = ind.evening_star(o,h,l,c)
-            # hisDf['ema'] = talib.EMA(c.astype(float).values,20)
-            hisDf["break_out"] = np.where( ((c > latestHigh) & (hisDf.index.values > latestHighDate)), 1, 0)
-            # print(hisDf)
-            if hisDf["break_out"].iloc[-1]:
-                breakOutDate = hisDf.index.values[-1]
-                print(breakOutDate)
+            df = fetch_history(obj=obj,from_date=from_date,to_date=to_date)
+            o = df["open"]
+            h = df["high"]
+            l = df["low"]
+            c = df["close"]
+
+            # df["created_at"] = df[convert_date(df["created_at"],DATE_FORMAT_YMDTHMSZ,DATE_FORMAT_YMDHMS)]
+            # df['created_at'] = pd.to_datetime(df['created_at'],format=DATE_FORMAT_YMDTHMSZ)
+            # # df = df.sort_index()
+            # df.set_index('created_at',inplace=True)
+            # df['candle'] = ind.candle_type(o,h,l,c)
+            # df["prev_high"] = np.where(h.isin(df['value']),1,0)
+            # df['doji'] = ind.get_doji(o,h,l,c)
+            # df['tws'] = ind.three_white_soldiers(o,h,l,c)
+            # df['es'] = ind.evening_star(o,h,l,c)
+            # df['ema'] = talib.EMA(c.astype(float).values,20)
+            # df["test"] = df.index[df["prev_high"].eq(1)].max()
+            df["break_out"] = np.where( (ind.is_bullish(o=o,c=c) & (c > latestHigh) & (df.index.values > latestHighDate)), 1, 0)
+            # df["exist"] = df.loc[df.index.values > latestHighDate,"break_out"].any()
+
+            if df["break_out"].iloc[-1]:
+                breakOut = df.iloc[-1]
+                preBreakOut = df.iloc[-2]
+                moreBack = df.iloc[-3] #this needs to be corrected
+            mdf = None
+            if (breakOut is not None) & (preBreakOut is not None):
+                # breakOut.name/preBreakOut.name is the index name here i.e. created_at
+                to_date = pd.to_datetime(breakOut.name,format=DATE_FORMAT_YMDTHMSZ).strftime(DATE_FORMAT_YMD)
+                from_date = pd.to_datetime(moreBack.name,format=DATE_FORMAT_YMDTHMSZ).strftime(DATE_FORMAT_YMD)
+                mdf = fetch_history(obj=obj,from_date=from_date, to_date=to_date,force_mis=True)
+
+            if mdf is not None:
+                secondTimeFrame = PARAMS[ORDER_TYPE]["MULTIFRAME"][1]
+                mdf = mdf.between_time("09:15", "15:30")
+                multiframe = mdf.resample(secondTimeFrame,label="left", closed="left", origin='start_day', offset='9h15min').agg({
+                    'open':'first',
+                    'high':'max',
+                    'low':'min',
+                    'close':'last',
+                }).dropna()
+                m_o = multiframe["open"]
+                m_h = multiframe["high"]
+                m_l = multiframe["low"]
+                m_c = multiframe["close"]
+
+                multiframe['ema_3'] = (talib.EMA(m_c.astype(float).values,3))
+                multiframe['ema_3'] = round(multiframe['ema_3'],2)
+                multiframe['candle'] = ind.candle_type(m_o, m_h, m_l, m_c)
+                # multiframe['tws'] = ind.three_white_soldiers(m_o, m_h, m_l, m_c)
+                # multiframe['es'] = ind.evening_star(m_o, m_h, m_l, m_c)
+                multiframe['three_bullish'] = ind.three_bullish_candle(m_o, m_h, m_l, m_c)
+                # multiframe['growth'] = ind.check_growth(multiframe)
+                # multiframe['ema_3'] = ta.ema(df['close'], length=3).shift(1)
+                junction = pd.concat([
+                    multiframe.loc["2026-02-04"].tail(2),
+                    multiframe.loc["2026-02-05"].head(2),
+                ])
+                print(multiframe)
             sys.exit()
-            hisDf = hisDf.between_time("09:15", "15:30")
-            # for time in PARAMS["EQ"]["MULTIFRAME"]:
-            multiframe = hisDf.resample('3min', origin='start_day', offset='9h15min').agg({
-                'open':'first',
-                'high':'max',
-                'low':'min',
-                'close':'last',
-            }).dropna().tail(300)
 
             # multiframe["CDL3WHITESOLDIERS"] = getattr(talib,'CDL3WHITESOLDIERS')(multiframe["open"],multiframe["high"],multiframe["low"],multiframe["close"])
             # multiframe = multiframe[multiframe["CDL3WHITESOLDIERS"] != 0]

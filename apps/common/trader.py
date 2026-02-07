@@ -1,3 +1,4 @@
+import numpy as np
 import requests
 import talib
 import upstox_client
@@ -65,6 +66,10 @@ def get_history(instrument_key, unit, interval, to_date, from_date):
         print("Exception:", e)
     return response.data.candles
 
+def get_db_history(equity_id, to_date, from_date):
+    history = Historical.objects.filter(equity_id=equity_id).order_by('created_at').values('created_at','open','high','low','close','volume')
+    return list(history)
+
 def get_ema(array, timeperiod = 3):
     return talib.EMA(array, timeperiod=3)
 
@@ -78,7 +83,7 @@ def get_swing_hl(array,window = 3, low = False):
 
 def get_ohlc(equity_id, date):
     pDate = parse_date(date)
-    history = Historical.objects.filter(equity_id=118, created_at__date= pDate).first()
+    history = Historical.objects.filter(equity_id=equity_id, created_at__date= pDate).first()
     return history
 
 def get_patterns(type):

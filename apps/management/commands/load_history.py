@@ -32,7 +32,7 @@ def get_historical_data(instrument_key, unit, interval, to_date, from_date):
 class Command(BaseCommand):
     message = "Loads history from database"
     def handle(self, *args, **options):
-        ids = [118]
+        ids = [3957]
         filters: Dict[str, Any] = {
             "instrument_type":"EQ",
             "exchange":Constants.NSE

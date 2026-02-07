@@ -2,20 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1ac1f391-f911-442e-bfe6-9cf88a51108a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/common/indicators.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apps/equities/models/pattern.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pytrade.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pytrade.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/common/indicators.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/common/indicators.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/common/trader.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/common/trader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/management/commands/test_cmd.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/test_cmd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/management/commands/load_history.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/load_history.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/management/commands/trend_tracker.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/management/commands/trend_tracker.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/users/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,6 +1,12 @@
 import numpy as np
 
 DOJI_BODY = 0.2
+AVG_CANDLE_HEIGHT = 0.3
+
+def set_avg_body(h,l):
+    range_ = h - l
+    atr = range_.rolling(14).mean()
+    global AVG_CANDLE_HEIGHT
 
 def get_doji(o,h,l,c):
     body = (c - o).abs()
@@ -18,15 +24,23 @@ def candle_type(o,h,l,c):
              np.where(is_bullish(o,c),1,0),
     )
 
+# def check_growth(df):
+
+
 def is_proper_bullish(o,h,l,c):
     body = np.abs(c - o)
     range_ = h - l
     upper_wick = h - np.maximum(o, c)
     atr = range_.rolling(14).mean()
+    print(atr)
     bullish = is_bullish(o=o,c=c)
     strong_body = body >= DOJI_BODY * atr
     small_upper_wick = upper_wick <= body     #upper wick less than half of body
     cond = bullish & strong_body & small_upper_wick
+    return cond
+
+def three_bullish_candle(o,h,l,c):
+    cond = is_proper_bullish(o,h,l,c)
     return cond
 
 def three_white_soldiers(o, h, l, c):
